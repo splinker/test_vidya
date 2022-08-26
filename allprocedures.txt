@@ -1,0 +1,87 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `check_username_exists`(
+    IN in_username varchar(45),
+    OUT out_result varchar(45)
+)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT "FALSE" INTO out_result;
+	SELECT "TRUE" INTO out_result FROM `employee` WHERE username = in_username;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_user_from_employee_table`(
+    IN in_username varchar(45),
+    OUT out_result varchar(45)
+)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT "FALSE" INTO out_result;
+    DELETE FROM `employee` WHERE username = in_username;
+    COMMIT;
+	SELECT "TRUE" INTO out_result;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_employee_by_username`(
+    IN in_username varchar(45),
+	OUT out_emp_id INT,
+    OUT out_username varchar(45),
+	OUT out_name varchar(45),
+	OUT out_role varchar(45),
+	OUT out_city varchar(45),
+	OUT out_country varchar(45),
+    OUT out_result varchar(45)
+)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 'SQLException encountered' INTO out_result;
+    
+	SELECT empid, username, name, role, city, country
+	INTO out_emp_id, out_username, out_name, out_role, out_city,out_country
+	FROM employee WHERE username = in_username;
+    
+    SELECT "success" INTO out_result;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_employee`(
+	IN in_emp_id INT,
+    IN in_username varchar(45),
+	IN in_name varchar(45),
+	IN in_role varchar(45),
+	IN in_city varchar(45),
+	IN in_country varchar(45),
+    OUT out_result varchar(45)
+)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 'SQLException encountered' INTO out_result;
+    
+	INSERT INTO EMPLOYEE (empid, username, name, role, city, country) 
+    VALUES (in_emp_id, in_username,in_name,in_role,in_city,in_country);
+	COMMIT;
+    
+    SELECT "success" INTO out_result;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_employee_data`(
+    IN in_username varchar(45),
+    IN in_emp_id INT,
+	IN in_name varchar(45),
+	IN in_role varchar(45),
+	IN in_city varchar(45),
+	IN in_country varchar(45),
+    OUT out_result varchar(45)
+)
+BEGIN
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 'SQLException encountered' INTO out_result;
+    
+    UPDATE `employee` SET empid = in_emp_id, name =in_name, role = in_role, city = in_city, country = in_country
+    WHERE username = in_username;
+	COMMIT;
+    
+    SELECT "success" INTO out_result;
+END$$
+DELIMITER ;
